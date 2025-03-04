@@ -22,7 +22,7 @@ MCP3428 MCP(0x68);
 static LGFX lcd;   
 
 float val;
-
+int channel = 1;
 // ROS Configuration
 rcl_publisher_t publisher;
 std_msgs__msg__Float32 msg;
@@ -187,7 +187,7 @@ void loop()
     if (error == 0)
     {
         long Raw_ADC;
-        MCP.SetConfiguration(1, 16, 0, 1);
+        MCP.SetConfiguration(channel, 16, 0, 1);
         Raw_ADC = MCP.readADC() * 0.0625; //Convert to mV
 
         val = constrain(Raw_ADC, 185, 950);
@@ -206,7 +206,11 @@ void loop()
     else
     {
         lcd.fillScreen(TFT_BLACK);
-        drawBoldText("MCP3428 Disconnected!", lcd.width() / 2, lcd.height() / 2, 2, TFT_WHITE);
+        drawBoldText(("Sensor "+String(channel)).c_str(), lcd.width() / 2, lcd.height() / 3, 2, TFT_YELLOW);
+
+        // Display ADC Value in Bold Green
+        drawBoldText("Discon.", lcd.width() / 2, lcd.height() * 2 / 3, 2, TFT_RED);
+
     }
 
     delay(500);
